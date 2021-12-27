@@ -1,14 +1,18 @@
 package com.example.kalkulatorhistory;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -28,7 +32,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    RecyclerView recyclerView;
     TextView hasil;
     EditText num1, num2;
     RadioButton tambah, kurang, kali, bagi;
@@ -38,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
     int angka1, angka2;
     float total;
 
-    private ArrayAdapter<String> mHistory;
-    private androidx.recyclerview.widget.LinearLayoutManager mLayoutManager;
+    ArrayList<String> arrayList;
+    ArrayAdapter<String> mHistory;
     SharedPreferences sharedPreferences;
 
     @Override
@@ -47,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mHistory = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
+        arrayList = new ArrayList<String>();
+        mHistory = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
         ListView listView = (ListView) findViewById(R.id.listview);
         listView.setAdapter(mHistory);
         hasil = (TextView) findViewById(R.id.hasil);
@@ -114,8 +118,31 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("angka1", String.valueOf(num1));
                 editor.putString("angka2", String.valueOf(num2));
                 editor.commit();
-                    Toast.makeText(MainActivity.this, "Tersimpan", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Tersimpan", Toast.LENGTH_SHORT).show();
                 }
+
             });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                final int angka = i;
+                new AlertDialog.Builder(MainActivity.this)
+                        .setIcon(android.R.drawable.ic_delete)
+                        .setTitle("Yakin ingin menghapus ?")
+                        .setMessage("Apakah kamu ingin menghapus data ini ?")
+                        .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                arrayList.remove(angka);
+                                mHistory.notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("Tidak", null)
+                        .show();
+                return true;
+            }
+        });
         }
     }
