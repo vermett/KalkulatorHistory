@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">KalkulatorHistory</string>
+    <string name="SHARE_KEY">Kalkulator History</string>
+    <string name="RECORD_LIST">RecordList</string>
 </resources>
